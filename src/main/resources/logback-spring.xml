@@ -1,0 +1,46 @@
+<configuration packagingData="true">
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){magenta} %clr([%thread]){cyan} %clr(%-5level){}%clr([%logger{0}:%line]){blue} %msg %n"/>
+
+    <property name="FILE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{0}:%line] %msg %n"/>
+
+    <springProperty name="LOG_PATH" source="log.config.path"/>
+
+    <springProperty name="LOG_FILE_NAME" source="log.config.info_log_file"/>
+
+    <springProperty name="ERROR_LOG_FILE_NAME" source="log.config.error_log_file"/>
+
+    <springProfile name="local">
+        <include resource="appender/console-appender.xml"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+        </root>
+
+    </springProfile>
+
+    <springProfile name="dev">
+        <include resource="appender/console-appender.xml"/>
+        <include resource="appender/info-log-appender.xml"/>
+        <include resource="appender/error-log-appender.xml"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_APPENDER"/>
+            <appender-ref ref="ERROR_APPENDER"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <include resource="appender/console-appender.xml"/>
+        <include resource="appender/info-log-appender.xml"/>
+        <include resource="appender/error-log-appender.xml"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE_APPENDER"/>
+            <appender-ref ref="FILE_APPENDER"/>
+            <appender-ref ref="ERROR_APPENDER"/>
+        </root>
+    </springProfile>
+
+</configuration>
