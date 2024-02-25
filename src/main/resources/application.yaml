@@ -1,0 +1,23 @@
+spring:
+  config:
+    import: ${ENV_PATH}
+
+  profiles:
+    include: db, security
+    group:
+      local: local
+
+server:
+  port: ${PORT}
+  shutdown: graceful
+
+# 로그 설정
+log:
+  config:
+    path: ${LOG_PATH}
+    info_log_file: info
+    error_log_file: error
+
+logging:
+  level:
+    p6spy: info
