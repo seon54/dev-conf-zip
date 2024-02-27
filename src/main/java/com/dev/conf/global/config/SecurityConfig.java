@@ -1,5 +1,7 @@
 package com.dev.conf.global.config;
 
+import com.dev.conf.global.security.filter.ExceptionHandlerFilter;
+import com.dev.conf.global.security.filter.JwtAuthenticationFilter;
 import com.dev.conf.global.security.handler.JwtAuthenticationSuccessHandler;
 import com.dev.conf.global.security.jwt.JwtUtil;
 import com.dev.conf.global.security.service.CustomOAuth2UserService;
@@ -14,12 +16,13 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-public class OAuth2LoginSecurityConfig {
+public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
@@ -45,10 +48,22 @@ public class OAuth2LoginSecurityConfig {
                                 .authenticated()
                 )
                 .oauth2Login(oauth ->
-                        oauth.successHandler(new JwtAuthenticationSuccessHandler(objectMapper, jwtUtil))
+                        oauth
+                                .successHandler(new JwtAuthenticationSuccessHandler(objectMapper, jwtUtil))
                                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
-                );
+                )
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class);
+
         return http.build();
+    }
+
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(oAuth2UserService, jwtUtil);
+    }
+
+    public ExceptionHandlerFilter exceptionHandlerFilter() {
+        return new ExceptionHandlerFilter(objectMapper);
     }
 
 }
