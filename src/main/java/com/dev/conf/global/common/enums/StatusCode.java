@@ -14,6 +14,7 @@ public enum StatusCode {
     USER_NOT_FOUND(404, "User Not Found"),
     TOKEN_INVALID(400, "Invalid Token"),
     TOKEN_EXPIRED(400, "Expired Token"),
+    CONFERENCE_ALREADY_EXISTS(400, "Conference Already Exists"),
 
     // Server Error
     SERVER_ERROR(500, "Server Error");

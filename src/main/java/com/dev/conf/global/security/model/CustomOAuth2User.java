@@ -1,6 +1,7 @@
 package com.dev.conf.global.security.model;
 
 import com.dev.conf.domain.user.entity.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
@@ -35,4 +37,5 @@ public class CustomOAuth2User implements OAuth2User {
     public String getName() {
         return user.getUsername();
     }
+
 }

@@ -16,4 +16,9 @@ public class VideoHashtag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_id", nullable = false)
     private Hashtag hashtag;
+
+    public VideoHashtag(Conference conference, Hashtag hashtag) {
+        this.conference = conference;
+        this.hashtag = hashtag;
+    }
 }

@@ -22,17 +22,6 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    public ApiResponse(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public ApiResponse(int code, String message, T data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
-    }
-
     public static ApiResponse<Object> success() {
         return new ApiResponse<>(StatusCode.OK);
     }
@@ -41,8 +30,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(StatusCode.OK, data);
     }
 
-    public static ApiResponse<Object> badRequest() {
-        return new ApiResponse<>(StatusCode.BAD_REQUEST);
+    public static ApiResponse<Object> badRequest(StatusCode statusCode) {
+        return new ApiResponse<>(statusCode);
     }
 
     public static ApiResponse<Object> of(StatusCode statusCode) {

@@ -13,7 +13,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> general(GeneralException e) {
-        return ResponseEntity.badRequest().body(ApiResponse.badRequest());
+        return ResponseEntity.badRequest().body(ApiResponse.badRequest(e.getStatusCode()));
     }
 
 }
