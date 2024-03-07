@@ -7,13 +7,13 @@ import java.util.List;
 
 public record AddConferenceRequestDto(
         @NotNull
-        String url,
+        String conferenceUrl,
         @NotNull
         String title,
         @NotNull
         String conferenceName,
         @NotNull
-        String year,
+        int conferenceYear,
         @NotNull
         ConferenceCategory conferenceCategory,
         List<String> hashtagList

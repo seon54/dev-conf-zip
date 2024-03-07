@@ -12,6 +12,7 @@ import org.hibernate.annotations.Comment;
 import java.util.ArrayList;
 import java.util.List;
 
+@Table(name = "conference")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Conference extends TimeBaseEntity {
@@ -25,7 +26,7 @@ public class Conference extends TimeBaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "conference")
-    private List<VideoHashtag> hashtags = new ArrayList<>();
+    private final List<VideoHashtag> hashtags = new ArrayList<>();
 
     @Comment("컨퍼런스 제목")
     @Column
@@ -33,7 +34,7 @@ public class Conference extends TimeBaseEntity {
 
     @Comment("컨퍼런스 URL")
     @Column
-    private String url;
+    private String conferenceUrl;
 
     @Comment("영상 제목")
     @Column
@@ -41,7 +42,7 @@ public class Conference extends TimeBaseEntity {
 
     @Comment("컨퍼런스 발표 연도")
     @Column
-    private String year;
+    private int conferenceYear;
 
     @Comment("컨퍼런스 분류")
     @Column
@@ -49,12 +50,12 @@ public class Conference extends TimeBaseEntity {
     private ConferenceCategory conferenceCategory;
 
     @Builder
-    public Conference(String url, String title, String conferenceName, String year, ConferenceCategory conferenceCategory, User user) {
+    public Conference(String conferenceUrl, String title, String conferenceName, int conferenceYear, ConferenceCategory conferenceCategory, User user) {
         this.user = user;
         this.title = title;
-        this.url = url;
+        this.conferenceUrl = conferenceUrl;
         this.conferenceName = conferenceName;
-        this.year = year;
+        this.conferenceYear = conferenceYear;
         this.conferenceCategory = conferenceCategory;
     }
 }

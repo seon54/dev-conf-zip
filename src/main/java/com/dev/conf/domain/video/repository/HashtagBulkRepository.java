@@ -1,6 +1,6 @@
 package com.dev.conf.domain.video.repository;
 
-import com.dev.conf.domain.video.entity.Hashtag;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,16 +21,16 @@ public class HashtagBulkRepository {
     public void upsert(List<String> keywords) {
         String sql = "INSERT INTO hashtag(keyword) VALUES (?) ON CONFLICT DO NOTHING ";
 
-       jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-           @Override
-           public void setValues(PreparedStatement ps, int i) throws SQLException {
-               ps.setString(1, keywords.get(i));
-           }
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(@NonNull PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, keywords.get(i));
+            }
 
-           @Override
-           public int getBatchSize() {
-               return keywords.size();
-           }
-       });
+            @Override
+            public int getBatchSize() {
+                return keywords.size();
+            }
+        });
     }
 }

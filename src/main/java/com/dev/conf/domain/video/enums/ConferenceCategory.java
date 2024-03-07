@@ -1,7 +1,9 @@
 package com.dev.conf.domain.video.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
 
+@Getter
 public enum ConferenceCategory {
     BACKEND("backend"),
     DATA("data"),
@@ -9,7 +11,7 @@ public enum ConferenceCategory {
     WEB("web"),
     ETC("etc");
 
-    private String category;
+    private final String category;
 
     ConferenceCategory(String category) {
         this.category = category;
@@ -18,7 +20,7 @@ public enum ConferenceCategory {
     @JsonCreator
     public static ConferenceCategory getConferenceCategory(String value) {
         for (ConferenceCategory conferenceCategory : ConferenceCategory.values()) {
-            if (conferenceCategory.category.equals(value)) {
+            if (conferenceCategory.name().equals(value)) {
                 return conferenceCategory;
             }
         }

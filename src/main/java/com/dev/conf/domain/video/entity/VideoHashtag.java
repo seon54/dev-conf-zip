@@ -1,7 +1,11 @@
 package com.dev.conf.domain.video.entity;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
+import static lombok.AccessLevel.PROTECTED;
+
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 public class VideoHashtag {
 

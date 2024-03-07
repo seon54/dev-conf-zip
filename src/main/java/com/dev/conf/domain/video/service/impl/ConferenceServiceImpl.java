@@ -12,7 +12,6 @@ import com.dev.conf.domain.video.repository.HashtagBulkRepository;
 import com.dev.conf.domain.video.repository.HashtagRepository;
 import com.dev.conf.domain.video.repository.VideoHashtagRepository;
 import com.dev.conf.domain.video.service.ConferenceService;
-import com.dev.conf.global.security.model.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +30,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final ConferenceMapper conferenceMapper;
 
     @Transactional
-    public void addConference(CustomOAuth2User oAuth2User, AddConferenceRequestDto addConferenceRequestDto) {
-        User user = oAuth2User.getUser();
+    public void addConference(User user, AddConferenceRequestDto addConferenceRequestDto) {
         checkAlreadyExists(user, addConferenceRequestDto);
 
         Conference conference = conferenceRepository.save(conferenceMapper.toConference(addConferenceRequestDto, user));
@@ -40,7 +38,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     private void checkAlreadyExists(User user, AddConferenceRequestDto addConferenceRequestDto) {
-        if (conferenceRepository.existsByUserAndUrl(user, addConferenceRequestDto.url())) {
+        if (conferenceRepository.existsByUserAndConferenceUrl(user, addConferenceRequestDto.conferenceUrl())) {
             throw new ConferenceExistException();
         }
     }
@@ -56,7 +54,7 @@ public class ConferenceServiceImpl implements ConferenceService {
 
         // VideoHashtag 저장
         List<VideoHashtag> videoHashtags = new ArrayList<>();
-        for (Hashtag hashtag: hashtags) {
+        for (Hashtag hashtag : hashtags) {
             videoHashtags.add(new VideoHashtag(conference, hashtag));
         }
         videoHashtagRepository.saveAll(videoHashtags);

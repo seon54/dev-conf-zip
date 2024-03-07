@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
-    private Integer code;
-    private String message;
+    private final Integer code;
+    private final String message;
     private T data;
 
     public ApiResponse(StatusCode statusCode) {

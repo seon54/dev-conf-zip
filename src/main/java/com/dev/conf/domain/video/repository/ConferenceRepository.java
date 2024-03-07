@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ConferenceRepository extends JpaRepository<Conference, Long> {
 
-    boolean existsByUserAndUrl(User user, String url);
+    boolean existsByUserAndConferenceUrl(User user, String conferenceUrl);
 
 }

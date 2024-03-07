@@ -20,9 +20,9 @@ public class ConferenceController {
     private final ConferenceService conferenceService;
 
     @PostMapping
-    public ApiResponse<Object> addConference(@AuthUser CustomOAuth2User user,
+    public ApiResponse<Object> addConference(@AuthUser CustomOAuth2User oAuth2User,
                                              @Valid @RequestBody AddConferenceRequestDto addConferenceRequestDto) {
-        conferenceService.addConference(user, addConferenceRequestDto);
+        conferenceService.addConference(oAuth2User.getUser(), addConferenceRequestDto);
         return ApiResponse.success();
     }
 }

@@ -16,4 +16,8 @@ public class Hashtag {
 
     @Column(length = 50, unique = true, nullable = false)
     private String keyword;
+
+    public Hashtag(String keyword) {
+        this.keyword = keyword;
+    }
 }
