@@ -1,6 +1,7 @@
 package com.dev.conf.global.security.service;
 
 import com.dev.conf.domain.user.entity.User;
+import com.dev.conf.domain.user.exception.UserNotFoundException;
 import com.dev.conf.domain.user.repository.UserRepository;
 import com.dev.conf.global.security.model.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         oAuth2Attributes.put("id", attributes.get("sub"));
         oAuth2Attributes.put("email", attributes.get("email").toString());
         return oAuth2Attributes;
+    }
+
+    public OAuth2User loadByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        Map<String, Object> oAuth2Attributes = new HashMap<>();
+        oAuth2Attributes.put("id", user.getProvider());
+        oAuth2Attributes.put("email", user.getEmail());
+        return new CustomOAuth2User(user, oAuth2Attributes);
     }
 
 }

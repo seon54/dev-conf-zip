@@ -1,5 +1,6 @@
 package com.dev.conf.global.security.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JwtUtil {
@@ -41,4 +43,30 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String extractEmail(String token) {
+        Claims claims = getClaims(token);
+        return (String) claims.getOrDefault("email", null);
+    }
+
+    public boolean validate(String token, OAuth2User user) {
+        String email = extractEmail(token);
+        return email.equals(user.getAttribute("email")) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractClaims(token, Claims::getExpiration).before(new Date());
+    }
+
+    private <T> T extractClaims(String token, Function<Claims, T> claimsResolver) {
+        Claims claims = getClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }

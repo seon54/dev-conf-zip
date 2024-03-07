@@ -1,0 +1,19 @@
+= ConfZip API
+:doctype: book
+:source-highlighter: hightlightjs
+:toc: left
+:toclevels: 2
+:seclinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+== 영상 추가 API
+=== Request
+include::{snippets}/video/http-request.adoc[]
+==== Request Fields
+include::{snippets}/video/request-fields.adoc[]
+
+=== Response
+include::{snippets}/video/http-response.adoc[]

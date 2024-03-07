@@ -2,13 +2,18 @@ package com.dev.conf.domain.video.entity;
 
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
-import com.dev.conf.domain.video.enums.VideoTime;
 import com.dev.conf.global.common.entity.TimeBaseEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Table(name = "conference")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Conference extends TimeBaseEntity {
 
@@ -21,22 +26,36 @@ public class Conference extends TimeBaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "conference")
-    private List<VideoHashtag> hashtags = new ArrayList<>();
+    private final List<VideoHashtag> hashtags = new ArrayList<>();
 
+    @Comment("컨퍼런스 제목")
     @Column
     private String title;
 
+    @Comment("컨퍼런스 URL")
+    @Column
+    private String conferenceUrl;
+
+    @Comment("영상 제목")
     @Column
     private String conferenceName;
 
+    @Comment("컨퍼런스 발표 연도")
     @Column
-    private String year;
+    private int conferenceYear;
 
+    @Comment("컨퍼런스 분류")
     @Column
     @Enumerated(EnumType.STRING)
     private ConferenceCategory conferenceCategory;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private VideoTime videoTime;
+    @Builder
+    public Conference(String conferenceUrl, String title, String conferenceName, int conferenceYear, ConferenceCategory conferenceCategory, User user) {
+        this.user = user;
+        this.title = title;
+        this.conferenceUrl = conferenceUrl;
+        this.conferenceName = conferenceName;
+        this.conferenceYear = conferenceYear;
+        this.conferenceCategory = conferenceCategory;
+    }
 }
