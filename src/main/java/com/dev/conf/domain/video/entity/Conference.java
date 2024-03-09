@@ -2,6 +2,7 @@ package com.dev.conf.domain.video.entity;
 
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
+import com.dev.conf.domain.video.enums.ConferenceStatus;
 import com.dev.conf.global.common.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -45,9 +46,14 @@ public class Conference extends TimeBaseEntity {
     private int conferenceYear;
 
     @Comment("컨퍼런스 분류")
-    @Column(length = 10, name = "conference_category",nullable = false)
+    @Column(length = 10, name = "conference_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private ConferenceCategory conferenceCategory;
+
+    @Comment("컨퍼런스 상태")
+    @Column(length = 8, name = "conference_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ConferenceStatus conferenceStatus;
 
     @Builder
     public Conference(String conferenceUrl, String title, String conferenceName, int conferenceYear, ConferenceCategory conferenceCategory, User user) {

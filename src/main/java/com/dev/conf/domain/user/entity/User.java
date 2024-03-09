@@ -35,7 +35,7 @@ public class User extends TimeBaseEntity {
     private String email;
 
     @OneToMany(mappedBy = "user")
-    private List<Conference> conferenceList = new ArrayList<>();
+    private final List<Conference> conferenceList = new ArrayList<>();
 
     public User(String username, String email, String provider, String providerId) {
         this.username = username;
