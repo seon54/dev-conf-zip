@@ -29,23 +29,23 @@ public class Conference extends TimeBaseEntity {
     private final List<VideoHashtag> hashtags = new ArrayList<>();
 
     @Comment("컨퍼런스 제목")
-    @Column
+    @Column(length = 30, nullable = false)
     private String title;
 
     @Comment("컨퍼런스 URL")
-    @Column
+    @Column(length = 100, nullable = false, name = "conference_url")
     private String conferenceUrl;
 
     @Comment("영상 제목")
-    @Column
+    @Column(length = 50, nullable = false, name = "conference_name")
     private String conferenceName;
 
     @Comment("컨퍼런스 발표 연도")
-    @Column
+    @Column(name = "conference_year")
     private int conferenceYear;
 
     @Comment("컨퍼런스 분류")
-    @Column
+    @Column(length = 10, name = "conference_category",nullable = false)
     @Enumerated(EnumType.STRING)
     private ConferenceCategory conferenceCategory;
 

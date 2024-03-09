@@ -22,16 +22,16 @@ public class User extends TimeBaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column
+    @Column(length = 10, nullable = false)
     private String username;
 
-    @Column
+    @Column(length = 50)
     private String provider;
 
-    @Column
+    @Column(length = 100, name = "provider_id")
     private String providerId;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 100, nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "user")

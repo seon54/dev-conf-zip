@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import static lombok.AccessLevel.PROTECTED;
 
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "video_hashtag")
 @Entity
 public class VideoHashtag {
 
