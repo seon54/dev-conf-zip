@@ -5,17 +5,11 @@ import lombok.Getter;
 
 @Getter
 public enum ConferenceCategory {
-    BACKEND("backend"),
-    DATA("data"),
-    INFRA("infra"),
-    WEB("web"),
-    ETC("etc");
-
-    private final String category;
-
-    ConferenceCategory(String category) {
-        this.category = category;
-    }
+    BACKEND,
+    DATA,
+    INFRA,
+    WEB,
+    ETC;
 
     @JsonCreator
     public static ConferenceCategory getConferenceCategory(String value) {

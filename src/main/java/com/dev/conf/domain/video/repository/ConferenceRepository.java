@@ -4,8 +4,14 @@ import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.entity.Conference;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ConferenceRepository extends JpaRepository<Conference, Long> {
 
     boolean existsByUserAndConferenceUrl(User user, String conferenceUrl);
+
+    Optional<Conference> findByIdAndUser(long id, User user);
+
+
 
 }
