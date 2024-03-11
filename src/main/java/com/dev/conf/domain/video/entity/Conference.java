@@ -7,13 +7,20 @@ import com.dev.conf.global.common.entity.TimeBaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Table(name = "conference")
+@DynamicUpdate
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Conference extends TimeBaseEntity {
@@ -51,7 +58,8 @@ public class Conference extends TimeBaseEntity {
     private ConferenceCategory conferenceCategory;
 
     @Comment("컨퍼런스 상태")
-    @Column(length = 8, name = "conference_status", nullable = false)
+    @ColumnDefault("'BEFORE_WATCHING'")
+    @Column(length = 15, name = "conference_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ConferenceStatus conferenceStatus;
 
@@ -63,5 +71,9 @@ public class Conference extends TimeBaseEntity {
         this.conferenceName = conferenceName;
         this.conferenceYear = conferenceYear;
         this.conferenceCategory = conferenceCategory;
+    }
+
+    public void updateStatus(ConferenceStatus conferenceStatus) {
+        this.conferenceStatus = conferenceStatus;
     }
 }
