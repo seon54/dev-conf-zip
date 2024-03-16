@@ -2,10 +2,13 @@ package com.dev.conf.domain.video.service;
 
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
+import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
+import com.dev.conf.domain.video.enums.ConferenceStatus;
 import com.dev.conf.domain.video.exception.ConferenceExistException;
+import com.dev.conf.domain.video.exception.ConferenceNotFoundException;
 import com.dev.conf.domain.video.mapper.ConferenceMapper;
 import com.dev.conf.domain.video.repository.ConferenceRepository;
 import com.dev.conf.domain.video.repository.HashtagBulkRepository;
@@ -20,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
@@ -79,6 +83,28 @@ class ConferenceServiceTest {
         assertThrows(ConferenceExistException.class, () -> conferenceService.addConference(user, dto));
 
         verify(conferenceRepository, times(1)).existsByUserAndConferenceUrl(user, VIDEO_URL);
+    }
+
+    @DisplayName("컨퍼런스 상태 변경 성공")
+    @Test
+    void testUpdateStatus() {
+        when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.of(conference));
+        when(conferenceRepository.save(any(Conference.class))).thenReturn(conference);
+
+        UpdateStatusRequestDto dto = new UpdateStatusRequestDto(ConferenceStatus.WATCHING);
+        conferenceService.updateStatus(user, conference.getId(), dto);
+
+        verify(conferenceRepository, times(1)).findByIdAndUser(conference.getId(), user);
+        verify(conferenceRepository, times(1)).save(conference);
+    }
+
+    @DisplayName("컨퍼런스 상태 변경 실패")
+    @Test
+    void testUpdateStatusFail() {
+        when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenThrow(ConferenceNotFoundException.class);
+
+        UpdateStatusRequestDto dto = new UpdateStatusRequestDto(ConferenceStatus.WATCHING);
+        assertThrows(ConferenceNotFoundException.class, () -> conferenceService.updateStatus(user, 2L, dto));
     }
 
     private static AddConferenceRequestDto getAddConferenceRequestDtoWithTags() {
