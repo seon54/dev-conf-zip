@@ -2,10 +2,13 @@ package com.dev.conf.domain.video.service.impl;
 
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
+import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
+import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
 import com.dev.conf.domain.video.entity.VideoHashtag;
 import com.dev.conf.domain.video.exception.ConferenceExistException;
+import com.dev.conf.domain.video.exception.ConferenceNotFoundException;
 import com.dev.conf.domain.video.mapper.ConferenceMapper;
 import com.dev.conf.domain.video.repository.ConferenceRepository;
 import com.dev.conf.domain.video.repository.HashtagBulkRepository;
@@ -58,6 +61,16 @@ public class ConferenceServiceImpl implements ConferenceService {
             videoHashtags.add(new VideoHashtag(conference, hashtag));
         }
         videoHashtagRepository.saveAll(videoHashtags);
+    }
+
+    @Transactional
+    public ConferenceStatusResponseDto updateStatus(User user, long id, UpdateStatusRequestDto updateStatusRequestDto) {
+        Conference conference = conferenceRepository.findByIdAndUser(id, user)
+                .orElseThrow(ConferenceNotFoundException::new);
+
+        conference.updateStatus(updateStatusRequestDto.conferenceStatus());
+        Conference savedConference = conferenceRepository.save(conference);
+        return conferenceMapper.toConferenceStatusResponseDto(savedConference);
     }
 
 }

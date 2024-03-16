@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -38,6 +40,24 @@ class ConferenceRepositoryTest {
         // then
         assertThat(result).isTrue();
         assertThat(result2).isFalse();
+    }
+
+    @DisplayName("사용자 & ID로 컨퍼런스 조회")
+    @Test
+    void testFindByIdAndUser() {
+        // given
+        User user = getUser();
+        userRepository.save(user);
+        Conference conference = new Conference(VIDEO_URL, "title", "conference 1", 2024, ConferenceCategory.BACKEND, user);
+        conferenceRepository.save(conference);
+
+        // when
+        Optional<Conference> result = conferenceRepository.findByIdAndUser(conference.getId(), user);
+        Optional<Conference> result2 = conferenceRepository.findByIdAndUser(2L, user);
+
+        // then
+        assertThat(result).isPresent().contains(conference);
+        assertThat(result2).isNotPresent();
     }
 
     private static User getUser() {

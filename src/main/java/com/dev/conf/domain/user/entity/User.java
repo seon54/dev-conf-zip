@@ -22,20 +22,20 @@ public class User extends TimeBaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column
+    @Column(length = 30, nullable = false)
     private String username;
 
-    @Column
+    @Column(length = 50)
     private String provider;
 
-    @Column
+    @Column(name = "provider_id")
     private String providerId;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 100, nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "user")
-    private List<Conference> conferenceList = new ArrayList<>();
+    private final List<Conference> conferenceList = new ArrayList<>();
 
     public User(String username, String email, String provider, String providerId) {
         this.username = username;
