@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.dev.conf.docs.ApiDocumentUtils.getDocumentRequest;
 import static com.dev.conf.docs.ApiDocumentUtils.getDocumentResponse;
-import static com.dev.conf.global.common.enums.StatusCode.OK;
+import static com.dev.conf.global.common.enums.StatusCode.CREATED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -50,9 +50,9 @@ class ConferenceControllerTest extends RestDocsBaseTest {
         mockMvc.perform(post("/videos")
                         .content(toJson(dto))
                         .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(OK.getCode()))
-                .andExpect(jsonPath("$.message").value(OK.getMessage()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code").value(CREATED.getCode()))
+                .andExpect(jsonPath("$.message").value(CREATED.getMessage()))
                 .andDo(document("video",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -81,9 +81,9 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                         .content(toJson(dto))
                         .contentType(APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(OK.getCode()))
-                .andExpect(jsonPath("$.message").value(OK.getMessage()));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code").value(CREATED.getCode()))
+                .andExpect(jsonPath("$.message").value(CREATED.getMessage()));
     }
 
     private static AddConferenceRequestDto getAddConferenceRequestDtoWithTags() {

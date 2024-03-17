@@ -5,11 +5,17 @@ import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.service.ConferenceService;
 import com.dev.conf.global.common.dto.ApiResponse;
+import com.dev.conf.global.common.enums.StatusCode;
 import com.dev.conf.global.security.model.AuthUser;
 import com.dev.conf.global.security.model.CustomOAuth2User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 
 @RequestMapping("/videos")
 @RequiredArgsConstructor
@@ -18,11 +24,18 @@ public class ConferenceController {
 
     private final ConferenceService conferenceService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ApiResponse<Object> addConference(@AuthUser CustomOAuth2User oAuth2User,
                                              @Valid @RequestBody AddConferenceRequestDto addConferenceRequestDto) {
         conferenceService.addConference(oAuth2User.getUser(), addConferenceRequestDto);
-        return ApiResponse.success();
+        return ApiResponse.success(StatusCode.CREATED);
+    }
+
+    @GetMapping
+    public ApiResponse<Object> getConferenceList(@AuthUser CustomOAuth2User oAuth2User,
+                                                 @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ApiResponse.success(conferenceService.getConferenceList(oAuth2User.getUser(), pageable));
     }
 
     @PatchMapping("/{id}/status")

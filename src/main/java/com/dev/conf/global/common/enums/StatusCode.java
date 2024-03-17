@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum StatusCode {
     // OK
     OK(200, "OK"),
+    CREATED(201, "Created"),
 
     // Client Error
     BAD_REQUEST(400, "Bad Request"),
