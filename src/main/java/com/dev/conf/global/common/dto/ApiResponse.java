@@ -22,10 +22,6 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    public static ApiResponse<Object> success() {
-        return new ApiResponse<>(StatusCode.OK);
-    }
-
     public static ApiResponse<Object> success(StatusCode statusCode) {
         return new ApiResponse<>(statusCode);
     }

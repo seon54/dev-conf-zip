@@ -11,9 +11,31 @@ endif::[]
 
 == 영상 추가 API
 === Request
-include::{snippets}/video/http-request.adoc[]
+include::{snippets}/video-create/http-request.adoc[]
 ==== Request Fields
-include::{snippets}/video/request-fields.adoc[]
+include::{snippets}/video-create/request-fields.adoc[]
 
 === Response
-include::{snippets}/video/http-response.adoc[]
+include::{snippets}/video-create/http-response.adoc[]
+
+== 영상 목록 조회 API
+=== Request
+include::{snippets}/video-list/http-request.adoc[]
+==== Query Parameters
+include::{snippets}/video-list/query-parameters.adoc[]
+
+=== Response
+include::{snippets}/video-list/http-response.adoc[]
+include::{snippets}/video-list/response-fields.adoc[]
+
+== 영상 상태 변경 조회 API
+=== Request
+include::{snippets}/update-status/http-request.adoc[]
+==== Path Parameter
+include::{snippets}/update-status/path-parameters.adoc[]
+==== Request Fields
+include::{snippets}/update-status/request-fields.adoc[]
+
+=== Response
+include::{snippets}/update-status/http-response.adoc[]
+include::{snippets}/update-status/response-fields.adoc[]
