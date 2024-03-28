@@ -3,6 +3,7 @@ package com.dev.conf.domain.video.service.impl;
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
+import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
@@ -16,6 +17,8 @@ import com.dev.conf.domain.video.repository.HashtagRepository;
 import com.dev.conf.domain.video.repository.VideoHashtagRepository;
 import com.dev.conf.domain.video.service.ConferenceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,9 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final VideoHashtagRepository videoHashtagRepository;
     private final ConferenceMapper conferenceMapper;
 
+    /**
+     * 컨퍼런스 추가
+     */
     @Transactional
     public void addConference(User user, AddConferenceRequestDto addConferenceRequestDto) {
         checkAlreadyExists(user, addConferenceRequestDto);
@@ -40,12 +46,18 @@ public class ConferenceServiceImpl implements ConferenceService {
         saveHashtag(addConferenceRequestDto, conference);
     }
 
+    /**
+     * 컨퍼런스 존재 여부 확인
+     */
     private void checkAlreadyExists(User user, AddConferenceRequestDto addConferenceRequestDto) {
         if (conferenceRepository.existsByUserAndConferenceUrl(user, addConferenceRequestDto.conferenceUrl())) {
             throw new ConferenceExistException();
         }
     }
 
+    /**
+     * 해시태그 저장
+     */
     private void saveHashtag(AddConferenceRequestDto addConferenceRequestDto, Conference conference) {
         if (addConferenceRequestDto.hashtagList() == null || addConferenceRequestDto.hashtagList().isEmpty()) return;
 
@@ -63,6 +75,9 @@ public class ConferenceServiceImpl implements ConferenceService {
         videoHashtagRepository.saveAll(videoHashtags);
     }
 
+    /**
+     * 컨퍼런스 상태값 변경
+     */
     @Transactional
     public ConferenceStatusResponseDto updateStatus(User user, long id, UpdateStatusRequestDto updateStatusRequestDto) {
         Conference conference = conferenceRepository.findByIdAndUser(id, user)
@@ -71,6 +86,13 @@ public class ConferenceServiceImpl implements ConferenceService {
         conference.updateStatus(updateStatusRequestDto.conferenceStatus());
         Conference savedConference = conferenceRepository.save(conference);
         return conferenceMapper.toConferenceStatusResponseDto(savedConference);
+    }
+
+    /**
+     * 컨퍼런스 목록 조회
+     */
+    public Page<ConferenceDetailResponseDto> getConferenceList(User user, Pageable pageable) {
+        return conferenceRepository.findAllByUser(user, pageable);
     }
 
 }
