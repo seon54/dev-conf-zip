@@ -71,6 +71,7 @@ public class Conference extends TimeBaseEntity {
         this.conferenceName = conferenceName;
         this.conferenceYear = conferenceYear;
         this.conferenceCategory = conferenceCategory;
+        this.conferenceStatus = ConferenceStatus.BEFORE_WATCHING;
     }
 
     public void updateStatus(ConferenceStatus conferenceStatus) {

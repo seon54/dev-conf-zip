@@ -3,6 +3,7 @@ package com.dev.conf.domain.video.service;
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
+import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
@@ -21,6 +22,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +112,19 @@ class ConferenceServiceTest {
         assertThrows(ConferenceNotFoundException.class, () -> conferenceService.updateStatus(user, 2L, dto));
     }
 
+    @DisplayName("컨퍼런스 목록 조회 성공")
+    @Test
+    void testGetConferenceList() {
+        ConferenceDetailResponseDto dto = getConferenceDetailResponseDto();
+        Page page = new PageImpl(List.of(dto));
+        when(conferenceRepository.findAllByUser(any(User.class), any(Pageable.class))).thenReturn(page);
+
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<ConferenceDetailResponseDto> response = conferenceService.getConferenceList(user, pageable);
+        verify(conferenceRepository, times(1)).findAllByUser(user, pageable);
+    }
+
+
     private static AddConferenceRequestDto getAddConferenceRequestDtoWithTags() {
         return new AddConferenceRequestDto(
                 VIDEO_URL,
@@ -116,6 +134,11 @@ class ConferenceServiceTest {
                 ConferenceCategory.BACKEND,
                 List.of("tag1", "tag2")
         );
+    }
+
+    private static ConferenceDetailResponseDto getConferenceDetailResponseDto() {
+        ConferenceDetailResponseDto dto = new ConferenceDetailResponseDto(1, "title1", VIDEO_URL, "conference1", 2024, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
+        return dto;
     }
 
 
