@@ -3,6 +3,7 @@ package com.dev.conf.domain.video.service.impl;
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
+import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
 import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
@@ -11,10 +12,7 @@ import com.dev.conf.domain.video.entity.VideoHashtag;
 import com.dev.conf.domain.video.exception.ConferenceExistException;
 import com.dev.conf.domain.video.exception.ConferenceNotFoundException;
 import com.dev.conf.domain.video.mapper.ConferenceMapper;
-import com.dev.conf.domain.video.repository.ConferenceRepository;
-import com.dev.conf.domain.video.repository.HashtagBulkRepository;
-import com.dev.conf.domain.video.repository.HashtagRepository;
-import com.dev.conf.domain.video.repository.VideoHashtagRepository;
+import com.dev.conf.domain.video.repository.*;
 import com.dev.conf.domain.video.service.ConferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +32,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     private final HashtagBulkRepository hashtagBulkRepository;
     private final VideoHashtagRepository videoHashtagRepository;
     private final ConferenceMapper conferenceMapper;
+    private final VideoHashtagBulkRepository videoHashtagBulkRepository;
 
     /**
      * 컨퍼런스 추가
@@ -80,8 +79,7 @@ public class ConferenceServiceImpl implements ConferenceService {
      */
     @Transactional
     public ConferenceStatusResponseDto updateStatus(User user, long id, UpdateStatusRequestDto updateStatusRequestDto) {
-        Conference conference = conferenceRepository.findByIdAndUser(id, user)
-                .orElseThrow(ConferenceNotFoundException::new);
+        Conference conference = getConference(user, id);
 
         conference.updateStatus(updateStatusRequestDto.conferenceStatus());
         Conference savedConference = conferenceRepository.save(conference);
@@ -99,9 +97,28 @@ public class ConferenceServiceImpl implements ConferenceService {
      * 컨퍼런스 상세 정보 조회
      */
     public ConferenceDetailResponseDto getConferenceDetail(User user, long id) {
-        Conference conference = conferenceRepository.findByIdAndUser(id, user)
-                .orElseThrow(ConferenceNotFoundException::new);
+        Conference conference = getConference(user, id);
         return conferenceMapper.toConferenceDetailResponseDto(conference);
+    }
+
+    /**
+     * 컨퍼런스 태그 변경
+     */
+    @Transactional
+    public ConferenceDetailResponseDto updateTags(User user, long id, UpdateTagRequestDto updateTagRequestDto) {
+        Conference conference = getConference(user, id);
+        upsertHashtags(updateTagRequestDto, conference);
+        return conferenceMapper.toConferenceDetailResponseDto(conference);
+    }
+
+    private void upsertHashtags(UpdateTagRequestDto updateTagRequestDto, Conference conference) {
+        hashtagBulkRepository.upsert(updateTagRequestDto.hashtagList());
+        List<Hashtag> hashtags = hashtagRepository.findAllByKeyword(updateTagRequestDto.hashtagList());
+        videoHashtagBulkRepository.upsert(conference.getId(), hashtags);
+    }
+
+    private Conference getConference(User user, long id) {
+        return conferenceRepository.findByIdAndUser(id, user).orElseThrow(ConferenceNotFoundException::new);
     }
 
 }
