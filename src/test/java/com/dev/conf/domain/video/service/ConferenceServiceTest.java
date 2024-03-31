@@ -120,10 +120,28 @@ class ConferenceServiceTest {
         when(conferenceRepository.findAllByUser(any(User.class), any(Pageable.class))).thenReturn(page);
 
         Pageable pageable = PageRequest.of(0, 5);
-        Page<ConferenceDetailResponseDto> response = conferenceService.getConferenceList(user, pageable);
+        conferenceService.getConferenceList(user, pageable);
+
         verify(conferenceRepository, times(1)).findAllByUser(user, pageable);
     }
 
+    @DisplayName("컨퍼런스 상세 조회 성공")
+    @Test
+    void testGetConferenceDetail() {
+        when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.of(conference));
+
+        conferenceService.getConferenceDetail(user, 1);
+
+        verify(conferenceRepository, times(1)).findByIdAndUser(1, user);
+    }
+
+    @DisplayName("컨퍼런스 상세 조회 실패")
+    @Test
+    void testGetConferenceDetailFail() {
+        when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenThrow(ConferenceNotFoundException.class);
+
+        assertThrows(ConferenceNotFoundException.class, () -> conferenceService.getConferenceDetail(user, 1));
+    }
 
     private static AddConferenceRequestDto getAddConferenceRequestDtoWithTags() {
         return new AddConferenceRequestDto(

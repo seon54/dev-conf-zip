@@ -457,10 +457,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_response_2">Response</a></li>
 </ul>
 </li>
-<li><a href="#_영상_상태_변경_조회_api">영상 상태 변경 조회 API</a>
+<li><a href="#_영상_상세_정보_조회_api">영상 상세 정보 조회 API</a>
 <ul class="sectlevel2">
 <li><a href="#_request_3">Request</a></li>
 <li><a href="#_response_3">Response</a></li>
+</ul>
+</li>
+<li><a href="#_영상_상태_변경_조회_api">영상 상태 변경 조회 API</a>
+<ul class="sectlevel2">
+<li><a href="#_request_4">Request</a></li>
+<li><a href="#_response_4">Response</a></li>
 </ul>
 </li>
 </ul>
@@ -643,8 +649,8 @@ Content-Length: 1099
       "unpaged" : false
     },
     "last" : true,
-    "totalElements" : 2,
     "totalPages" : 1,
+    "totalElements" : 2,
     "first" : true,
     "size" : 10,
     "number" : 0,
@@ -819,10 +825,131 @@ Content-Length: 1099
 </div>
 </div>
 <div class="sect1">
-<h2 id="_영상_상태_변경_조회_api">영상 상태 변경 조회 API</h2>
+<h2 id="_영상_상세_정보_조회_api">영상 상세 정보 조회 API</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_request_3">Request</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /videos/1 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_path_parameter">Path Parameter</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /videos/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_response_3">Response</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 289
+
+{
+  "code" : 200,
+  "message" : "OK",
+  "data" : {
+    "id" : 1,
+    "title" : "Dev Conf",
+    "conferenceUrl" : "www.dev-conf.com/videos/1",
+    "conferenceName" : "conference 1",
+    "conferenceYear" : 2024,
+    "conferenceCategory" : "BACKEND",
+    "conferenceStatus" : "WATCHING"
+  }
+}</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태 메세지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.conferenceUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.conferenceName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 영상 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.conferenceYear</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 연도</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.conferenceCategory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.conferenceStatus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">상태값</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_영상_상태_변경_조회_api">영상 상태 변경 조회 API</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_request_4">Request</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /videos/1/status HTTP/1.1
@@ -836,9 +963,9 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect3">
-<h4 id="_path_parameter">Path Parameter</h4>
+<h4 id="_path_parameter_2">Path Parameter</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /videos/{id}/status</caption>
+<caption class="title">Table 2. /videos/{id}/status</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -886,7 +1013,7 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect2">
-<h3 id="_response_3">Response</h3>
+<h3 id="_response_4">Response</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
@@ -946,7 +1073,7 @@ Content-Length: 106
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-03-26 22:33:47 +0900
+Last updated 2024-03-31 17:25:24 +0900
 </div>
 </div>
 </body>

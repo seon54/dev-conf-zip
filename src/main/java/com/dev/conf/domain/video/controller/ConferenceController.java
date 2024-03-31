@@ -38,6 +38,12 @@ public class ConferenceController {
         return ApiResponse.success(conferenceService.getConferenceList(oAuth2User.getUser(), pageable));
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<Object> getConferenceDetail(@AuthUser CustomOAuth2User oAuth2User,
+                                                   @PathVariable long id) {
+        return ApiResponse.success(conferenceService.getConferenceDetail(oAuth2User.getUser(), id));
+    }
+
     @PatchMapping("/{id}/status")
     public ApiResponse<Object> updateStatus(@AuthUser CustomOAuth2User oAuth2User,
                                             @PathVariable long id,

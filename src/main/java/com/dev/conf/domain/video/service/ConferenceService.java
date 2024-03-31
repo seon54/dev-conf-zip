@@ -16,4 +16,6 @@ public interface ConferenceService {
     ConferenceStatusResponseDto updateStatus(User user, long id, UpdateStatusRequestDto updateStatusRequestDto);
 
     Page<ConferenceDetailResponseDto> getConferenceList(User user, Pageable pageable);
+
+    ConferenceDetailResponseDto getConferenceDetail(User user, long id);
 }

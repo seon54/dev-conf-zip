@@ -95,4 +95,13 @@ public class ConferenceServiceImpl implements ConferenceService {
         return conferenceRepository.findAllByUser(user, pageable);
     }
 
+    /**
+     * 컨퍼런스 상세 정보 조회
+     */
+    public ConferenceDetailResponseDto getConferenceDetail(User user, long id) {
+        Conference conference = conferenceRepository.findByIdAndUser(id, user)
+                .orElseThrow(ConferenceNotFoundException::new);
+        return conferenceMapper.toConferenceDetailResponseDto(conference);
+    }
+
 }
