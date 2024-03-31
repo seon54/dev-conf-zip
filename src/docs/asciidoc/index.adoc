@@ -28,6 +28,17 @@ include::{snippets}/video-list/query-parameters.adoc[]
 include::{snippets}/video-list/http-response.adoc[]
 include::{snippets}/video-list/response-fields.adoc[]
 
+== 영상 상세 정보 조회 API
+=== Request
+include::{snippets}/video-detail/http-request.adoc[]
+==== Path Parameter
+include::{snippets}/video-detail/path-parameters.adoc[]
+
+=== Response
+include::{snippets}/video-detail/http-response.adoc[]
+include::{snippets}/video-detail/response-fields.adoc[]
+
+
 == 영상 상태 변경 조회 API
 === Request
 include::{snippets}/update-status/http-request.adoc[]

@@ -59,6 +59,7 @@ class ConferenceControllerTest extends RestDocsBaseTest {
     private final static String TITLE = "Dev Conf";
     private final static String CONFERENCE_NAME1 = "conference 1";
     private final static String CONFERENCE_NAME2 = "conference 2";
+    private final static int CONFERENCE_YEAR = 2024;
 
     @DisplayName("[POST] 컨퍼런스 & 태그 추가 성공")
     @Test
@@ -130,14 +131,14 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 .andExpect(jsonPath("$.data.content[0].title").value(TITLE))
                 .andExpect(jsonPath("$.data.content[0].conferenceUrl").value(CONFERENCE_URL2))
                 .andExpect(jsonPath("$.data.content[0].conferenceName").value(CONFERENCE_NAME2))
-                .andExpect(jsonPath("$.data.content[0].conferenceYear").value(2024))
+                .andExpect(jsonPath("$.data.content[0].conferenceYear").value(CONFERENCE_YEAR))
                 .andExpect(jsonPath("$.data.content[0].conferenceCategory").value(ConferenceCategory.BACKEND.name()))
                 .andExpect(jsonPath("$.data.content[0].conferenceStatus").value(ConferenceStatus.BEFORE_WATCHING.name()))
                 .andExpect(jsonPath("$.data.content[1].id").value(1L))
                 .andExpect(jsonPath("$.data.content[1].title").value(TITLE))
                 .andExpect(jsonPath("$.data.content[1].conferenceUrl").value(CONFERENCE_URL1))
                 .andExpect(jsonPath("$.data.content[1].conferenceName").value(CONFERENCE_NAME1))
-                .andExpect(jsonPath("$.data.content[1].conferenceYear").value(2024))
+                .andExpect(jsonPath("$.data.content[1].conferenceYear").value(CONFERENCE_YEAR))
                 .andExpect(jsonPath("$.data.content[1].conferenceCategory").value(ConferenceCategory.BACKEND.name()))
                 .andExpect(jsonPath("$.data.content[1].conferenceStatus").value(ConferenceStatus.WATCHING.name()))
                 .andDo(document("video-list",
@@ -199,12 +200,8 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 .andDo(document("update-status",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("id").description("컨퍼런스 ID")
-                        ),
-                        requestFields(
-                                fieldWithPath("conferenceStatus").type(STRING).description("변경할 상태값")
-                        ),
+                        pathParameters(parameterWithName("id").description("컨퍼런스 ID")),
+                        requestFields(fieldWithPath("conferenceStatus").type(STRING).description("변경할 상태값")),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
                                 fieldWithPath("message").type(STRING).description("상태 메세지"),
@@ -213,10 +210,44 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                         )));
     }
 
+    @DisplayName("[GET] 컨퍼런스 상세 조회")
+    @Test
+    void testGetConferenceDetail() throws Exception {
+        long id = 1;
+        ConferenceDetailResponseDto dto = new ConferenceDetailResponseDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
+        when(conferenceService.getConferenceDetail(any(User.class), anyLong())).thenReturn(dto);
+
+        mockMvc.perform(get("/videos/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(OK.getCode()))
+                .andExpect(jsonPath("$.message").value(OK.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(id))
+                .andExpect(jsonPath("$.data.title").value(TITLE))
+                .andExpect(jsonPath("$.data.conferenceUrl").value(CONFERENCE_URL1))
+                .andExpect(jsonPath("$.data.conferenceName").value(CONFERENCE_NAME1))
+                .andExpect(jsonPath("$.data.conferenceCategory").value(String.valueOf(ConferenceCategory.BACKEND)))
+                .andExpect(jsonPath("$.data.conferenceStatus").value(String.valueOf(ConferenceStatus.WATCHING)))
+                .andDo(document("video-detail",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(parameterWithName("id").description("컨퍼런스 ID")),
+                        responseFields(
+                                fieldWithPath("code").type(NUMBER).description("상태 코드"),
+                                fieldWithPath("message").type(STRING).description("상태 메세지"),
+                                fieldWithPath("data.id").type(NUMBER).description("컨퍼런스 ID"),
+                                fieldWithPath("data.title").type(STRING).description("컨퍼런스 제목"),
+                                fieldWithPath("data.conferenceUrl").type(STRING).description("컨퍼런스 URL"),
+                                fieldWithPath("data.conferenceName").type(STRING).description("컨퍼런스 영상 제목"),
+                                fieldWithPath("data.conferenceYear").type(NUMBER).description("컨퍼런스 연도"),
+                                fieldWithPath("data.conferenceCategory").type(STRING).description("카테고리"),
+                                fieldWithPath("data.conferenceStatus").type(STRING).description("상태값")
+                        )));
+    }
+
     private static List<ConferenceDetailResponseDto> getConferenceDetailResponseDtos() {
         return Arrays.asList(
-                new ConferenceDetailResponseDto(2L, TITLE, CONFERENCE_URL2, CONFERENCE_NAME2, 2024, ConferenceCategory.BACKEND, ConferenceStatus.BEFORE_WATCHING),
-                new ConferenceDetailResponseDto(1L, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, 2024, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING)
+                new ConferenceDetailResponseDto(2L, TITLE, CONFERENCE_URL2, CONFERENCE_NAME2, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.BEFORE_WATCHING),
+                new ConferenceDetailResponseDto(1L, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING)
         );
     }
 
@@ -225,7 +256,7 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 CONFERENCE_URL1,
                 TITLE,
                 CONFERENCE_NAME1,
-                2024,
+                CONFERENCE_YEAR,
                 ConferenceCategory.BACKEND,
                 List.of("tag1", "tag2")
         );
@@ -236,7 +267,7 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 CONFERENCE_URL1,
                 TITLE,
                 CONFERENCE_NAME1,
-                2024,
+                CONFERENCE_YEAR,
                 ConferenceCategory.BACKEND,
                 null
         );
