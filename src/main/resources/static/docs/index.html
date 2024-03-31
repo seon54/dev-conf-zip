@@ -463,10 +463,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_response_3">Response</a></li>
 </ul>
 </li>
-<li><a href="#_영상_상태_변경_조회_api">영상 상태 변경 조회 API</a>
+<li><a href="#_영상_상태_변경_api">영상 상태 변경 API</a>
 <ul class="sectlevel2">
 <li><a href="#_request_4">Request</a></li>
 <li><a href="#_response_4">Response</a></li>
+</ul>
+</li>
+<li><a href="#_영상_해시태그_변경_api">영상 해시태그 변경 API</a>
+<ul class="sectlevel2">
+<li><a href="#_request_5">Request</a></li>
 </ul>
 </li>
 </ul>
@@ -946,7 +951,7 @@ Content-Length: 289
 </div>
 </div>
 <div class="sect1">
-<h2 id="_영상_상태_변경_조회_api">영상 상태 변경 조회 API</h2>
+<h2 id="_영상_상태_변경_api">영상 상태 변경 API</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_request_4">Request</h3>
@@ -1069,11 +1074,80 @@ Content-Length: 106
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_영상_해시태그_변경_api">영상 해시태그 변경 API</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_request_5">Request</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">PATCH /videos/1/tags HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 40
+Host: localhost:8080
+
+{
+  "hashtagList" : [ "tag1", "tag2" ]
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_path_parameter_3">Path Parameter</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. /videos/{id}/tags</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨퍼런스 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_request_fields_3">Request Fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">필드명</th>
+<th class="tableblock halign-left valign-top">타입</th>
+<th class="tableblock halign-left valign-top">설명</th>
+<th class="tableblock halign-left valign-top">필수값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hashtagList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">해시태그 목록</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-03-31 17:25:24 +0900
+Last updated 2024-03-31 20:58:12 +0900
 </div>
 </div>
 </body>
