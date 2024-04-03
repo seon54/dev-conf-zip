@@ -3,6 +3,7 @@ package com.dev.conf.domain.video.service;
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
+import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
 import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
@@ -11,10 +12,7 @@ import com.dev.conf.domain.video.enums.ConferenceStatus;
 import com.dev.conf.domain.video.exception.ConferenceExistException;
 import com.dev.conf.domain.video.exception.ConferenceNotFoundException;
 import com.dev.conf.domain.video.mapper.ConferenceMapper;
-import com.dev.conf.domain.video.repository.ConferenceRepository;
-import com.dev.conf.domain.video.repository.HashtagBulkRepository;
-import com.dev.conf.domain.video.repository.HashtagRepository;
-import com.dev.conf.domain.video.repository.VideoHashtagRepository;
+import com.dev.conf.domain.video.repository.*;
 import com.dev.conf.domain.video.service.impl.ConferenceServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,6 +47,8 @@ class ConferenceServiceTest {
     private VideoHashtagRepository videoHashtagRepository;
     @Mock
     private ConferenceMapper conferenceMapper;
+    @Mock
+    private VideoHashtagBulkRepository videoHashtagBulkRepository;
     @Mock
     private User user;
     @Mock
@@ -141,6 +141,23 @@ class ConferenceServiceTest {
         when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenThrow(ConferenceNotFoundException.class);
 
         assertThrows(ConferenceNotFoundException.class, () -> conferenceService.getConferenceDetail(user, 1));
+    }
+
+    @DisplayName("컨퍼런스 태그 변경 성공")
+    @Test
+    void testUpdateTags() {
+        when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.of(conference));
+        doNothing().when(hashtagBulkRepository).upsert(anyList());
+        when(hashtagRepository.findAllByKeyword(anyList())).thenReturn(List.of(hashtag1, hashtag2));
+        when(conferenceMapper.toConferenceDetailResponseDto(any(Conference.class))).thenReturn(getConferenceDetailResponseDto());
+
+        UpdateTagRequestDto requestDto = new UpdateTagRequestDto(List.of("tag1", "tag2"));
+        conferenceService.updateTags(user, 1, requestDto);
+
+        verify(conferenceRepository, times(1)).findByIdAndUser(1, user);
+        verify(hashtagBulkRepository, times(1)).upsert(requestDto.hashtagList());
+        verify(hashtagRepository, times(1)).findAllByKeyword(requestDto.hashtagList());
+        verify(conferenceMapper, times(1)).toConferenceDetailResponseDto(conference);
     }
 
     private static AddConferenceRequestDto getAddConferenceRequestDtoWithTags() {
