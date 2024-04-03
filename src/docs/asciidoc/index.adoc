@@ -39,7 +39,7 @@ include::{snippets}/video-detail/http-response.adoc[]
 include::{snippets}/video-detail/response-fields.adoc[]
 
 
-== 영상 상태 변경 조회 API
+== 영상 상태 변경 API
 === Request
 include::{snippets}/update-status/http-request.adoc[]
 ==== Path Parameter
@@ -50,3 +50,15 @@ include::{snippets}/update-status/request-fields.adoc[]
 === Response
 include::{snippets}/update-status/http-response.adoc[]
 include::{snippets}/update-status/response-fields.adoc[]
+
+== 영상 해시태그 변경 API
+=== Request
+include::{snippets}/update-hashtag/http-request.adoc[]
+==== Path Parameter
+include::{snippets}/update-hashtag/path-parameters.adoc[]
+==== Request Fields
+include::{snippets}/update-hashtag/request-fields.adoc[]
+
+=== Response
+include::{snippets}/update-hashtag/http-response.adoc[]
+include::{snippets}/update-hashtag/response-fields.adoc[]

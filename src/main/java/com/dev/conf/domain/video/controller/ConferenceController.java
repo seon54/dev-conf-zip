@@ -2,6 +2,8 @@ package com.dev.conf.domain.video.controller;
 
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
+import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
+import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.service.ConferenceService;
 import com.dev.conf.global.common.dto.ApiResponse;
@@ -54,5 +56,13 @@ public class ConferenceController {
                 updateStatusRequestDto
         );
         return ApiResponse.success(conferenceStatusResponseDto);
+    }
+
+    @PatchMapping("/{id}/tags")
+    public ApiResponse<Object> updateTags(@AuthUser CustomOAuth2User oAuth2User,
+                                          @PathVariable long id,
+                                          @Valid @RequestBody UpdateTagRequestDto updateTagRequestDto) {
+        ConferenceDetailResponseDto dto = conferenceService.updateTags(oAuth2User.getUser(), id, updateTagRequestDto);
+        return ApiResponse.success(dto);
     }
 }
