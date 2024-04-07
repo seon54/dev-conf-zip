@@ -6,6 +6,7 @@ import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
 import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.response.ConferenceResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
 import com.dev.conf.domain.video.enums.ConferenceStatus;
@@ -217,7 +218,7 @@ class ConferenceControllerTest extends RestDocsBaseTest {
     @Test
     void testGetConferenceDetail() throws Exception {
         long id = 1;
-        ConferenceDetailResponseDto dto = new ConferenceDetailResponseDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
+        ConferenceResponseDto dto = new ConferenceResponseDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING, List.of(TAG1, TAG2));
         when(conferenceService.getConferenceDetail(any(User.class), anyLong())).thenReturn(dto);
 
         mockMvc.perform(get("/videos/{id}", id))
@@ -230,6 +231,8 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 .andExpect(jsonPath("$.data.conferenceName").value(CONFERENCE_NAME1))
                 .andExpect(jsonPath("$.data.conferenceCategory").value(String.valueOf(ConferenceCategory.BACKEND)))
                 .andExpect(jsonPath("$.data.conferenceStatus").value(String.valueOf(ConferenceStatus.WATCHING)))
+                .andExpect(jsonPath("$.data.hashtagList[0]").value(TAG1))
+                .andExpect(jsonPath("$.data.hashtagList[1]").value(TAG2))
                 .andDo(document("video-detail",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -243,7 +246,8 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                                 fieldWithPath("data.conferenceName").type(STRING).description("컨퍼런스 영상 제목"),
                                 fieldWithPath("data.conferenceYear").type(NUMBER).description("컨퍼런스 연도"),
                                 fieldWithPath("data.conferenceCategory").type(STRING).description("카테고리"),
-                                fieldWithPath("data.conferenceStatus").type(STRING).description("상태값")
+                                fieldWithPath("data.conferenceStatus").type(STRING).description("상태값"),
+                                fieldWithPath("data.hashtagList").type(ARRAY).description("해시태그 목록")
                         )));
     }
 

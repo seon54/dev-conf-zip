@@ -129,10 +129,12 @@ class ConferenceServiceTest {
     @Test
     void testGetConferenceDetail() {
         when(conferenceRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.of(conference));
+        when(hashtagRepository.findKeywordsByConference(any(Conference.class))).thenReturn(List.of("tag1", "tag2"));
 
         conferenceService.getConferenceDetail(user, 1);
 
         verify(conferenceRepository, times(1)).findByIdAndUser(1, user);
+        verify(hashtagRepository, times(1)).findKeywordsByConference(conference);
     }
 
     @DisplayName("컨퍼런스 상세 조회 실패")
