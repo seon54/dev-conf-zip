@@ -5,6 +5,7 @@ import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
 import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.response.ConferenceResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
@@ -96,9 +97,10 @@ public class ConferenceServiceImpl implements ConferenceService {
     /**
      * 컨퍼런스 상세 정보 조회
      */
-    public ConferenceDetailResponseDto getConferenceDetail(User user, long id) {
+    public ConferenceResponseDto getConferenceDetail(User user, long id) {
         Conference conference = getConference(user, id);
-        return conferenceMapper.toConferenceDetailResponseDto(conference);
+        List<String> hashtaghList = hashtagRepository.findKeywordsByConference(conference);
+        return conferenceMapper.toConferenceResponseDto(conference, hashtaghList);
     }
 
     /**

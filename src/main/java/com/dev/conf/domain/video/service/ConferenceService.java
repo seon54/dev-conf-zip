@@ -5,6 +5,7 @@ import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
 import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.response.ConferenceResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ public interface ConferenceService {
 
     Page<ConferenceDetailResponseDto> getConferenceList(User user, Pageable pageable);
 
-    ConferenceDetailResponseDto getConferenceDetail(User user, long id);
+    ConferenceResponseDto getConferenceDetail(User user, long id);
 
     ConferenceDetailResponseDto updateTags(User user, long id, UpdateTagRequestDto updateTagRequestDto);
 }
