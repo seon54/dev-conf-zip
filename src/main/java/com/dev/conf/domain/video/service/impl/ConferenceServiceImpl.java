@@ -1,10 +1,12 @@
 package com.dev.conf.domain.video.service.impl;
 
 import com.dev.conf.domain.user.entity.User;
+import com.dev.conf.domain.video.dto.ConferenceDetailDto;
+import com.dev.conf.domain.video.dto.KeywordDetailDto;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
-import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.response.ConferenceListResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
@@ -23,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.*;
 
 @RequiredArgsConstructor
 @Service
@@ -90,8 +95,45 @@ public class ConferenceServiceImpl implements ConferenceService {
     /**
      * 컨퍼런스 목록 조회
      */
-    public Page<ConferenceDetailResponseDto> getConferenceList(User user, Pageable pageable) {
-        return conferenceRepository.findAllByUser(user, pageable);
+    public ConferenceListResponseDto getConferenceList(User user, Pageable pageable) {
+        Page<ConferenceDetailDto> conferenceDetailList = conferenceRepository.findAllByUser(user, pageable);
+        List<Long> conferenceIds = getConferenceIds(conferenceDetailList);
+        Map<Long, List<String>> keywordMap = getKeywordMap(conferenceIds);
+        List<ConferenceResponseDto> conferenceList = getResponseDtoList(conferenceDetailList.getContent(), keywordMap);
+        return new ConferenceListResponseDto(
+                conferenceList,
+                conferenceDetailList.getTotalPages(),
+                conferenceDetailList.getSize(),
+                conferenceDetailList.getTotalElements(),
+                conferenceDetailList.getPageable().getPageNumber()
+        );
+    }
+
+    private static List<Long> getConferenceIds(Page<ConferenceDetailDto> conferenceDetailList) {
+        return conferenceDetailList.getContent()
+                .stream()
+                .map(ConferenceDetailDto::id)
+                .toList();
+    }
+
+    private Map<Long, List<String>> getKeywordMap(List<Long> conferenceIds) {
+        return hashtagRepository.findKeywordDetailDtoListByConferenceIds(conferenceIds)
+                .stream()
+                .collect(
+                        groupingBy(
+                                KeywordDetailDto::conferenceId,
+                                mapping(KeywordDetailDto::keyword, toList()
+                                )
+                        )
+                );
+    }
+
+    private List<ConferenceResponseDto> getResponseDtoList(List<ConferenceDetailDto> conferenceDetailList, Map<Long, List<String>> keywordMap) {
+        List<ConferenceResponseDto> conferenceList = new ArrayList<>();
+        for (ConferenceDetailDto dto : conferenceDetailList) {
+            conferenceList.add(conferenceMapper.toConferenceResponseDto(dto, keywordMap.get(dto.id())));
+        }
+        return conferenceList;
     }
 
     /**
@@ -107,7 +149,7 @@ public class ConferenceServiceImpl implements ConferenceService {
      * 컨퍼런스 태그 변경
      */
     @Transactional
-    public ConferenceDetailResponseDto updateTags(User user, long id, UpdateTagRequestDto updateTagRequestDto) {
+    public ConferenceDetailDto updateTags(User user, long id, UpdateTagRequestDto updateTagRequestDto) {
         Conference conference = getConference(user, id);
         upsertHashtags(updateTagRequestDto, conference);
         return conferenceMapper.toConferenceDetailResponseDto(conference);

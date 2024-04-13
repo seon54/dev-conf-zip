@@ -1,8 +1,8 @@
 package com.dev.conf.domain.video.mapper;
 
 import com.dev.conf.domain.user.entity.User;
+import com.dev.conf.domain.video.dto.ConferenceDetailDto;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
-import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
@@ -19,7 +19,9 @@ public interface ConferenceMapper {
 
     ConferenceStatusResponseDto toConferenceStatusResponseDto(Conference conference);
 
-    ConferenceDetailResponseDto toConferenceDetailResponseDto(Conference conference);
+    ConferenceDetailDto toConferenceDetailResponseDto(Conference conference);
 
-    ConferenceResponseDto toConferenceResponseDto(Conference conference, List<String> hashtaghList);
+    ConferenceResponseDto toConferenceResponseDto(Conference conference, List<String> hashtagList);
+
+    ConferenceResponseDto toConferenceResponseDto(ConferenceDetailDto conferenceDetailDto, List<String> hashtagList);
 }
