@@ -1,10 +1,11 @@
 package com.dev.conf.domain.video.service;
 
 import com.dev.conf.domain.user.entity.User;
+import com.dev.conf.domain.video.dto.ConferenceDetailDto;
+import com.dev.conf.domain.video.dto.KeywordDetailDto;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
-import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
@@ -115,14 +116,18 @@ class ConferenceServiceTest {
     @DisplayName("컨퍼런스 목록 조회 성공")
     @Test
     void testGetConferenceList() {
-        ConferenceDetailResponseDto dto = getConferenceDetailResponseDto();
-        Page page = new PageImpl(List.of(dto));
+        ConferenceDetailDto dto = getConferenceDetailResponseDto();
+        Pageable pageable = PageRequest.of(0, 5);
+        Page page = new PageImpl(List.of(dto), pageable, 1);
         when(conferenceRepository.findAllByUser(any(User.class), any(Pageable.class))).thenReturn(page);
 
-        Pageable pageable = PageRequest.of(0, 5);
+        List<KeywordDetailDto> keywordDetailDtoList = List.of(new KeywordDetailDto(1, "tag1"));
+        when(hashtagRepository.findKeywordDetailDtoListByConferenceIds(anyList())).thenReturn(keywordDetailDtoList);
+
         conferenceService.getConferenceList(user, pageable);
 
         verify(conferenceRepository, times(1)).findAllByUser(user, pageable);
+        verify(hashtagRepository, times(1)).findKeywordDetailDtoListByConferenceIds(List.of(1L));
     }
 
     @DisplayName("컨퍼런스 상세 조회 성공")
@@ -173,9 +178,8 @@ class ConferenceServiceTest {
         );
     }
 
-    private static ConferenceDetailResponseDto getConferenceDetailResponseDto() {
-        ConferenceDetailResponseDto dto = new ConferenceDetailResponseDto(1, "title1", VIDEO_URL, "conference1", 2024, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
-        return dto;
+    private static ConferenceDetailDto getConferenceDetailResponseDto() {
+        return new ConferenceDetailDto(1, "title1", VIDEO_URL, "conference1", 2024, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
     }
 
 

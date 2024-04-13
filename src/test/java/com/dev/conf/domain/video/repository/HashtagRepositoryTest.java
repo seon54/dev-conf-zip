@@ -2,6 +2,7 @@ package com.dev.conf.domain.video.repository;
 
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.user.repository.UserRepository;
+import com.dev.conf.domain.video.dto.KeywordDetailDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.entity.Hashtag;
 import com.dev.conf.domain.video.entity.VideoHashtag;
@@ -62,6 +63,27 @@ class HashtagRepositoryTest {
 
         // then
         assertThat(keywords).hasSize(1).contains(TAG);
+    }
+
+    @DisplayName("컨퍼런스 ID 목록으로 해시태그 조회")
+    @Test
+    void testFindKeywordDetailDtoListByConferenceIds() {
+        // given
+        User user = getUser();
+        userRepository.save(user);
+        Conference conference = getConference(user);
+        conferenceRepository.save(conference);
+        Hashtag hashtag = new Hashtag(TAG);
+        hashtagRepository.save(hashtag);
+        videoHashtagRepository.save(new VideoHashtag(conference, hashtag));
+
+        // when
+        List<KeywordDetailDto> keywordDetailDtos = hashtagRepository.findKeywordDetailDtoListByConferenceIds(List.of(conference.getId()));
+
+        // then
+        assertThat(keywordDetailDtos).hasSize(1);
+        assertThat(keywordDetailDtos.get(0).conferenceId()).isEqualTo(conference.getId());
+        assertThat(keywordDetailDtos.get(0).keyword()).isEqualTo(TAG);
     }
 
 
