@@ -2,7 +2,7 @@ package com.dev.conf.domain.video.repository;
 
 import com.dev.conf.domain.user.entity.User;
 import com.dev.conf.domain.user.repository.UserRepository;
-import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.ConferenceDetailDto;
 import com.dev.conf.domain.video.entity.Conference;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +73,7 @@ class ConferenceRepositoryTest {
         conferenceRepository.save(conference);
 
         // when
-        Page<ConferenceDetailResponseDto> result = conferenceRepository.findAllByUser(user, PageRequest.of(0, 5));
+        Page<ConferenceDetailDto> result = conferenceRepository.findAllByUser(user, PageRequest.of(0, 5));
 
         // then
         assertThat(result.getContent().get(0).id()).isEqualTo(conference.getId());

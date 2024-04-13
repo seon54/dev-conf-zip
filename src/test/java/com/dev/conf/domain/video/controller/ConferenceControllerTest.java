@@ -2,10 +2,12 @@ package com.dev.conf.domain.video.controller;
 
 import com.dev.conf.docs.RestDocsBaseTest;
 import com.dev.conf.domain.user.entity.User;
+import com.dev.conf.domain.video.dto.ConferenceDetailDto;
 import com.dev.conf.domain.video.dto.request.AddConferenceRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateStatusRequestDto;
 import com.dev.conf.domain.video.dto.request.UpdateTagRequestDto;
-import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.response.ConferenceListResponseDto;
+import com.dev.conf.domain.video.dto.response.ConferenceResponseDto;
 import com.dev.conf.domain.video.dto.response.ConferenceStatusResponseDto;
 import com.dev.conf.domain.video.enums.ConferenceCategory;
 import com.dev.conf.domain.video.enums.ConferenceStatus;
@@ -112,12 +114,11 @@ class ConferenceControllerTest extends RestDocsBaseTest {
     @DisplayName("[GET] 컨퍼런스 목록 조회 성공")
     @Test
     void testGetConferenceList() throws Exception {
-        List<ConferenceDetailResponseDto> conferences = getConferenceDetailResponseDtos();
+        List<ConferenceResponseDto> conferenceResponseDtoList = getConferenceResponseDtoList();
         int pageSize = 10;
-        Pageable pageable = PageRequest.of(0, pageSize, Sort.by(DESC, "id"));
-        Page<ConferenceDetailResponseDto> page = new PageImpl<>(conferences, pageable, conferences.size());
+        ConferenceListResponseDto responseDto = new ConferenceListResponseDto(conferenceResponseDtoList, 1, pageSize, 2, 0);
 
-        when(conferenceService.getConferenceList(any(User.class), any(Pageable.class))).thenReturn(page);
+        when(conferenceService.getConferenceList(any(User.class), any(Pageable.class))).thenReturn(responseDto);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("page", "0");
@@ -128,22 +129,25 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 .andExpect(jsonPath("$.code").value(OK.getCode()))
                 .andExpect(jsonPath("$.message").value(OK.getMessage()))
                 .andExpect(jsonPath("$.data.totalPages").value(1))
-                .andExpect(jsonPath("$.data.totalElements").value(conferences.size()))
+                .andExpect(jsonPath("$.data.totalElements").value(conferenceResponseDtoList.size()))
                 .andExpect(jsonPath("$.data.size").value(pageSize))
-                .andExpect(jsonPath("$.data.content[0].id").value(2L))
-                .andExpect(jsonPath("$.data.content[0].title").value(TITLE))
-                .andExpect(jsonPath("$.data.content[0].conferenceUrl").value(CONFERENCE_URL2))
-                .andExpect(jsonPath("$.data.content[0].conferenceName").value(CONFERENCE_NAME2))
-                .andExpect(jsonPath("$.data.content[0].conferenceYear").value(CONFERENCE_YEAR))
-                .andExpect(jsonPath("$.data.content[0].conferenceCategory").value(ConferenceCategory.BACKEND.name()))
-                .andExpect(jsonPath("$.data.content[0].conferenceStatus").value(ConferenceStatus.BEFORE_WATCHING.name()))
-                .andExpect(jsonPath("$.data.content[1].id").value(1L))
-                .andExpect(jsonPath("$.data.content[1].title").value(TITLE))
-                .andExpect(jsonPath("$.data.content[1].conferenceUrl").value(CONFERENCE_URL1))
-                .andExpect(jsonPath("$.data.content[1].conferenceName").value(CONFERENCE_NAME1))
-                .andExpect(jsonPath("$.data.content[1].conferenceYear").value(CONFERENCE_YEAR))
-                .andExpect(jsonPath("$.data.content[1].conferenceCategory").value(ConferenceCategory.BACKEND.name()))
-                .andExpect(jsonPath("$.data.content[1].conferenceStatus").value(ConferenceStatus.WATCHING.name()))
+                .andExpect(jsonPath("$.data.number").value(0))
+                .andExpect(jsonPath("$.data.conferenceList[0].id").value(2L))
+                .andExpect(jsonPath("$.data.conferenceList[0].title").value(TITLE))
+                .andExpect(jsonPath("$.data.conferenceList[0].conferenceUrl").value(CONFERENCE_URL2))
+                .andExpect(jsonPath("$.data.conferenceList[0].conferenceName").value(CONFERENCE_NAME2))
+                .andExpect(jsonPath("$.data.conferenceList[0].conferenceYear").value(CONFERENCE_YEAR))
+                .andExpect(jsonPath("$.data.conferenceList[0].conferenceCategory").value(ConferenceCategory.BACKEND.name()))
+                .andExpect(jsonPath("$.data.conferenceList[0].conferenceStatus").value(ConferenceStatus.BEFORE_WATCHING.name()))
+                .andExpect(jsonPath("$.data.conferenceList[0].hashtagList[0]").value(TAG1))
+                .andExpect(jsonPath("$.data.conferenceList[1].id").value(1L))
+                .andExpect(jsonPath("$.data.conferenceList[1].title").value(TITLE))
+                .andExpect(jsonPath("$.data.conferenceList[1].conferenceUrl").value(CONFERENCE_URL1))
+                .andExpect(jsonPath("$.data.conferenceList[1].conferenceName").value(CONFERENCE_NAME1))
+                .andExpect(jsonPath("$.data.conferenceList[1].conferenceYear").value(CONFERENCE_YEAR))
+                .andExpect(jsonPath("$.data.conferenceList[1].conferenceCategory").value(ConferenceCategory.BACKEND.name()))
+                .andExpect(jsonPath("$.data.conferenceList[1].conferenceStatus").value(ConferenceStatus.WATCHING.name()))
+                .andExpect(jsonPath("$.data.conferenceList[1].hashtagList[0]").value(TAG2))
                 .andDo(document("video-list",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -154,32 +158,18 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("상태 코드"),
                                 fieldWithPath("message").type(STRING).description("상태 메세지"),
-                                fieldWithPath("data.content[].id").type(NUMBER).description("컨퍼런스 ID"),
-                                fieldWithPath("data.content[].title").type(STRING).description("컨퍼런스 제목"),
-                                fieldWithPath("data.content[].conferenceUrl").type(STRING).description("컨퍼런스 URL"),
-                                fieldWithPath("data.content[].conferenceName").type(STRING).description("컨퍼런스 영상 제목"),
-                                fieldWithPath("data.content[].conferenceYear").type(NUMBER).description("컨퍼런스 연도"),
-                                fieldWithPath("data.content[].conferenceCategory").type(STRING).description("카테고리"),
-                                fieldWithPath("data.content[].conferenceStatus").type(STRING).description("상태값"),
+                                fieldWithPath("data.conferenceList[].id").type(NUMBER).description("컨퍼런스 ID"),
+                                fieldWithPath("data.conferenceList[].title").type(STRING).description("컨퍼런스 제목"),
+                                fieldWithPath("data.conferenceList[].conferenceUrl").type(STRING).description("컨퍼런스 URL"),
+                                fieldWithPath("data.conferenceList[].conferenceName").type(STRING).description("컨퍼런스 영상 제목"),
+                                fieldWithPath("data.conferenceList[].conferenceYear").type(NUMBER).description("컨퍼런스 연도"),
+                                fieldWithPath("data.conferenceList[].conferenceCategory").type(STRING).description("카테고리"),
+                                fieldWithPath("data.conferenceList[].conferenceStatus").type(STRING).description("상태값"),
+                                fieldWithPath("data.conferenceList[].hashtagList").type(ARRAY).description("해시태그 목록"),
                                 fieldWithPath("data.totalPages").type(NUMBER).description("전체 페이지 수"),
                                 fieldWithPath("data.totalElements").type(NUMBER).description("전체 데이터 수"),
                                 fieldWithPath("data.size").type(NUMBER).description("데이터 개수"),
-                                fieldWithPath("data.pageable.pageNumber").type(NUMBER).description(""),
-                                fieldWithPath("data.pageable.pageSize").type(NUMBER).description(""),
-                                fieldWithPath("data.pageable.sort.empty").type(BOOLEAN).description(""),
-                                fieldWithPath("data.pageable.sort.sorted").type(BOOLEAN).description(""),
-                                fieldWithPath("data.pageable.sort.unsorted").type(BOOLEAN).description(""),
-                                fieldWithPath("data.pageable.offset").type(NUMBER).description(""),
-                                fieldWithPath("data.pageable.paged").type(BOOLEAN).description(""),
-                                fieldWithPath("data.pageable.unpaged").type(BOOLEAN).description(""),
-                                fieldWithPath("data.last").type(BOOLEAN).description("마지막 페이지 여부"),
-                                fieldWithPath("data.first").type(BOOLEAN).description("첫 페이지 여부"),
-                                fieldWithPath("data.number").type(NUMBER).description("페이지 번호"),
-                                fieldWithPath("data.sort.empty").type(BOOLEAN).description(""),
-                                fieldWithPath("data.sort.sorted").type(BOOLEAN).description(""),
-                                fieldWithPath("data.sort.unsorted").type(BOOLEAN).description(""),
-                                fieldWithPath("data.numberOfElements").type(NUMBER).description(""),
-                                fieldWithPath("data.empty").type(BOOLEAN).description("")
+                                fieldWithPath("data.number").type(NUMBER).description("페이지 번호")
                         )));
     }
 
@@ -217,7 +207,7 @@ class ConferenceControllerTest extends RestDocsBaseTest {
     @Test
     void testGetConferenceDetail() throws Exception {
         long id = 1;
-        ConferenceDetailResponseDto dto = new ConferenceDetailResponseDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
+        ConferenceResponseDto dto = new ConferenceResponseDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING, List.of(TAG1, TAG2));
         when(conferenceService.getConferenceDetail(any(User.class), anyLong())).thenReturn(dto);
 
         mockMvc.perform(get("/videos/{id}", id))
@@ -230,6 +220,8 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                 .andExpect(jsonPath("$.data.conferenceName").value(CONFERENCE_NAME1))
                 .andExpect(jsonPath("$.data.conferenceCategory").value(String.valueOf(ConferenceCategory.BACKEND)))
                 .andExpect(jsonPath("$.data.conferenceStatus").value(String.valueOf(ConferenceStatus.WATCHING)))
+                .andExpect(jsonPath("$.data.hashtagList[0]").value(TAG1))
+                .andExpect(jsonPath("$.data.hashtagList[1]").value(TAG2))
                 .andDo(document("video-detail",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -243,7 +235,8 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                                 fieldWithPath("data.conferenceName").type(STRING).description("컨퍼런스 영상 제목"),
                                 fieldWithPath("data.conferenceYear").type(NUMBER).description("컨퍼런스 연도"),
                                 fieldWithPath("data.conferenceCategory").type(STRING).description("카테고리"),
-                                fieldWithPath("data.conferenceStatus").type(STRING).description("상태값")
+                                fieldWithPath("data.conferenceStatus").type(STRING).description("상태값"),
+                                fieldWithPath("data.hashtagList").type(ARRAY).description("해시태그 목록")
                         )));
     }
 
@@ -252,7 +245,7 @@ class ConferenceControllerTest extends RestDocsBaseTest {
     void testUpdateTags() throws Exception {
         long id = 1;
         UpdateTagRequestDto requestDto = new UpdateTagRequestDto(List.of(TAG1, TAG2));
-        ConferenceDetailResponseDto responseDto = new ConferenceDetailResponseDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
+        ConferenceDetailDto responseDto = new ConferenceDetailDto(id, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING);
         when(conferenceService.updateTags(any(User.class), anyLong(), any(UpdateTagRequestDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(patch("/videos/{id}/tags", id)
@@ -286,10 +279,10 @@ class ConferenceControllerTest extends RestDocsBaseTest {
                         )));
     }
 
-    private static List<ConferenceDetailResponseDto> getConferenceDetailResponseDtos() {
+    private static List<ConferenceResponseDto> getConferenceResponseDtoList() {
         return Arrays.asList(
-                new ConferenceDetailResponseDto(2L, TITLE, CONFERENCE_URL2, CONFERENCE_NAME2, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.BEFORE_WATCHING),
-                new ConferenceDetailResponseDto(1L, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING)
+                new ConferenceResponseDto(2L, TITLE, CONFERENCE_URL2, CONFERENCE_NAME2, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.BEFORE_WATCHING, List.of(TAG1)),
+                new ConferenceResponseDto(1L, TITLE, CONFERENCE_URL1, CONFERENCE_NAME1, CONFERENCE_YEAR, ConferenceCategory.BACKEND, ConferenceStatus.WATCHING, List.of(TAG2))
         );
     }
 

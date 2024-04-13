@@ -1,9 +1,9 @@
-package com.dev.conf.domain.video.dto.response;
+package com.dev.conf.domain.video.dto;
 
 import com.dev.conf.domain.video.enums.ConferenceCategory;
 import com.dev.conf.domain.video.enums.ConferenceStatus;
 
-public record ConferenceDetailResponseDto(
+public record ConferenceDetailDto(
         long id,
         String title,
         String conferenceUrl,

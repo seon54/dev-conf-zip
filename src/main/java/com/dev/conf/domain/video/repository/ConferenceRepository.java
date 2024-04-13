@@ -1,7 +1,7 @@
 package com.dev.conf.domain.video.repository;
 
 import com.dev.conf.domain.user.entity.User;
-import com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto;
+import com.dev.conf.domain.video.dto.ConferenceDetailDto;
 import com.dev.conf.domain.video.entity.Conference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +16,8 @@ public interface ConferenceRepository extends JpaRepository<Conference, Long> {
 
     Optional<Conference> findByIdAndUser(long id, User user);
 
-    @Query("select new com.dev.conf.domain.video.dto.response.ConferenceDetailResponseDto" +
+    @Query("select new com.dev.conf.domain.video.dto.ConferenceDetailDto" +
             "(c.id, c.title, c.conferenceUrl, c.conferenceName, c.conferenceYear, c.conferenceCategory, c.conferenceStatus) from Conference c where c.user = :user")
-    Page<ConferenceDetailResponseDto> findAllByUser(User user, Pageable pageable);
+    Page<ConferenceDetailDto> findAllByUser(User user, Pageable pageable);
 
 }
